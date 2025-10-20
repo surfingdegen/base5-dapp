@@ -170,16 +170,11 @@ function App() {
     setTimeout(() => setSuccess(''), 3000);
   };
 
-  const handleTipDev = async () => {
-    const devAddress = "0xa5fad283d9b6ffbdf554c2966a09d8fccf4fbe3e";
-    try {
-      if (!account || !signer) {
-        await connectWallet();
-        setTimeout(() => {
-          setSuccess('Wallet connected! Click Tip-Dev again to send a tip.');
-        }, 1000);
-        return;
-      }
+    const handleTipDev = () => {
+    navigator.clipboard.writeText('0xa5fad283d9b6ffbdf554c2966a09d8fccf4fbe3e');
+    setSuccess('Dev address copied to clipboard!');
+    setTimeout(() => setSuccess(''), 3000);
+  };
       
       const tx = await signer.sendTransaction({
         to: devAddress,
