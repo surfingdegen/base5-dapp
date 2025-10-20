@@ -375,55 +375,88 @@ function App() {
 
   if (!account) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4 sm:p-6">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
         <div className="max-w-md w-full">
-          <div className="text-center mb-6 sm:mb-8">
-            <h1 className="text-4xl sm:text-5xl font-bold text-blue-400 mb-2 sm:mb-3">Base5</h1>
-            <p className="text-gray-400 text-sm sm:text-base">Auto-diversify into top 5 Base tokens</p>
-            <a 
-              href="https://basescan.org/address/0x4dc826be6fbeccaec2f767e0d8af3c55a22973d2#code" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-blue-400 text-xs sm:text-sm hover:underline mt-2 inline-flex items-center gap-1"
-            >
-              View Contract <ExternalLink className="w-3 h-3" />
-            </a>
-          </div>
-
-          <div className="backdrop-blur-xl bg-white/10 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-white/20">
-            <div className="flex justify-center mb-4 sm:mb-6">
-              <Wallet className="w-12 h-12 sm:w-16 sm:h-16 text-blue-400" />
+          <div className="backdrop-blur-xl bg-white/10 rounded-3xl p-8 border border-white/20 text-center">
+            <div className="flex justify-center mb-6">
+              <div className="w-20 h-20 rounded-2xl flex items-center justify-center bg-gradient-to-br from-blue-400 to-purple-500">
+                <Wallet className="w-10 h-10 text-white" />
+              </div>
             </div>
             
-            <h2 className="text-xl sm:text-2xl font-semibold text-white text-center mb-2 sm:mb-3">
-              Connect Your Wallet
-            </h2>
-            <p className="text-gray-400 text-center mb-4 sm:mb-6 text-sm sm:text-base">
-              Connect your Coinbase Wallet to get started
+            <h1 className="text-5xl font-bold mb-3 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              Base5
+            </h1>
+            <p className="text-gray-300 text-base mb-8">
+              Auto-diversify into 5 top Base tokens
             </p>
 
             <button
               onClick={connectWallet}
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold py-3 sm:py-4 px-6 rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 text-sm sm:text-base active:scale-95"
+              className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold py-4 px-6 rounded-2xl hover:from-blue-600 hover:to-purple-600 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 mb-6"
             >
               {loading ? 'Connecting...' : 'Connect Coinbase Wallet'}
             </button>
 
-            <p className="text-xs text-gray-500 text-center mt-3 sm:mt-4">
+            <div className="flex items-center justify-center gap-6 mb-4">
+              <button
+                onClick={() => window.open('https://surfingdegen.github.io/base5-docs/', '_blank')}
+                className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors underline"
+              >
+                Learn
+              </button>
+              <span className="text-gray-500">•</span>
+              <button
+                onClick={async () => {
+                  const devAddress = "0xa5fad283d9b6ffbdf554c2966a09d8fccf4fbe3e";
+                  try {
+                    if (window.ethereum) {
+                      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                      await window.ethereum.request({
+                        method: 'eth_sendTransaction',
+                        params: [{
+                          from: accounts[0],
+                          to: devAddress,
+                          value: '0x0',
+                        }],
+                      });
+                    } else {
+                      alert('Please install Coinbase Wallet');
+                    }
+                  } catch (error) {
+                    console.error('Tip error:', error);
+                  }
+                }}
+                className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors underline"
+              >
+                Tip-Dev
+              </button>
+            </div>
+
+            <p className="text-gray-400 text-xs">
               Make sure MetaMask is disabled if you have it installed
             </p>
 
             {error && (
-              <div className="mt-3 sm:mt-4 bg-red-500/20 border border-red-500/50 text-red-200 px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-xs sm:text-sm flex items-start gap-2">
+              <div className="mt-4 bg-red-500/20 border border-red-500/50 text-red-200 px-4 py-3 rounded-lg text-sm flex items-start gap-2">
                 <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
                 <span>{error}</span>
               </div>
             )}
           </div>
 
-          <div className="text-center mt-4 sm:mt-6 text-xs sm:text-sm text-gray-500 px-4">
-            Powered by Aerodrome on Base • Immutable Smart Contract
+          <div className="text-center mt-6 text-sm text-gray-500">
+            <p>Powered by Aerodrome on Base • Immutable Smart{' '}
+              <a 
+                href="https://basescan.org/address/0xa5fad283d9b6ffbdf554c2966a09d8fccf4fbe3e#code" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300 transition-colors underline"
+              >
+                Contract
+              </a>
+            </p>
           </div>
         </div>
       </div>
