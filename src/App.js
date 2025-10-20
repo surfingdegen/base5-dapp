@@ -170,6 +170,32 @@ function App() {
     setTimeout(() => setSuccess(''), 3000);
   };
 
+  const handleTipDev = async () => {
+    const devAddress = "0xa5fad283d9b6ffbdf554c2966a09d8fccf4fbe3e";
+    try {
+      if (!account || !signer) {
+        await connectWallet();
+        setTimeout(() => {
+          setSuccess('Wallet connected! Click Tip-Dev again to send a tip.');
+        }, 1000);
+        return;
+      }
+      
+      const tx = await signer.sendTransaction({
+        to: devAddress,
+        value: ethers.parseEther('0')
+      });
+      
+      setSuccess('Tip transaction opened in wallet!');
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (error) {
+      console.error('Tip error:', error);
+      if (error.code !== 4001 && error.code !== 'ACTION_REJECTED') {
+        setError('Tip failed: ' + (error.message || 'Unknown error'));
+      }
+    }
+  };
+
   const loadUSDCBalance = async () => {
     if (!signer || !account) return;
     
@@ -250,14 +276,12 @@ function App() {
     try {
       const amount = ethers.parseUnits(usdcAmount, 6);
       
-      // Validate amount
       if (parseFloat(usdcAmount) < 10) {
         setError('⚠️ Minimum deposit is 10 USDC. Smaller amounts may fail during withdrawal due to DEX liquidity constraints.');
         setLoading(false);
         return;
       }
 
-      // Check USDC balance
       const usdcContract = new ethers.Contract(USDC_ADDRESS, USDC_ABI, signer);
       const balance = await usdcContract.balanceOf(account);
       
@@ -267,7 +291,6 @@ function App() {
         return;
       }
 
-      // Check allowance
       const allowance = await usdcContract.allowance(account, CONTRACT_ADDRESS);
       if (allowance < amount) {
         setError('Please approve USDC first');
@@ -278,7 +301,6 @@ function App() {
 
       const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
       
-      // Estimate gas
       try {
         await contract.deposit.estimateGas(amount);
       } catch (gasError) {
@@ -323,7 +345,6 @@ function App() {
     try {
       const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
       
-      // Check if user has balances
       const result = await contract.getUserBalances(account);
       const hasBalance = result.some(val => val > 0n);
       
@@ -333,7 +354,6 @@ function App() {
         return;
       }
 
-      // Just log warning but don't block withdrawal
       const wethBalance = Number(ethers.formatUnits(result[0], 18));
       if (wethBalance < 0.001) {
         console.warn('Small withdrawal amount - gas fees may exceed value');
@@ -408,26 +428,7 @@ function App() {
               </button>
               <span className="text-gray-500">•</span>
               <button
-                onClick={async () => {
-                  const devAddress = "0xa5fad283d9b6ffbdf554c2966a09d8fccf4fbe3e";
-                  try {
-                    if (window.ethereum) {
-                      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                      await window.ethereum.request({
-                        method: 'eth_sendTransaction',
-                        params: [{
-                          from: accounts[0],
-                          to: devAddress,
-                          value: '0x0',
-                        }],
-                      });
-                    } else {
-                      alert('Please install Coinbase Wallet');
-                    }
-                  } catch (error) {
-                    console.error('Tip error:', error);
-                  }
-                }}
+                onClick={handleTipDev}
                 className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors underline"
               >
                 Tip-Dev
