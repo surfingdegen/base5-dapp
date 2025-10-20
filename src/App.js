@@ -170,25 +170,10 @@ function App() {
     setTimeout(() => setSuccess(''), 3000);
   };
 
-    const handleTipDev = () => {
+  const handleTipDev = () => {
     navigator.clipboard.writeText('0xa5fad283d9b6ffbdf554c2966a09d8fccf4fbe3e');
     setSuccess('Dev address copied to clipboard!');
     setTimeout(() => setSuccess(''), 3000);
-  };
-      
-      const tx = await signer.sendTransaction({
-        to: devAddress,
-        value: ethers.parseEther('0')
-      });
-      
-      setSuccess('Tip transaction opened in wallet!');
-      setTimeout(() => setSuccess(''), 3000);
-    } catch (error) {
-      console.error('Tip error:', error);
-      if (error.code !== 4001 && error.code !== 'ACTION_REJECTED') {
-        setError('Tip failed: ' + (error.message || 'Unknown error'));
-      }
-    }
   };
 
   const loadUSDCBalance = async () => {
@@ -308,7 +293,7 @@ function App() {
       const tx = await contract.deposit(amount);
       setSuccess('Transaction submitted! Swapping and distributing assets...');
       
-      const receipt = await tx.wait();
+      await tx.wait();
       
       setSuccess('✅ Deposit successful! Assets distributed to 5 tokens.');
       setUsdcAmount('');
