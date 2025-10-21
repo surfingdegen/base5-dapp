@@ -171,6 +171,7 @@ function App() {
   };
 
 const handleTipDev = () => {
+    console.log('Tip-Dev clicked!');
     const devAddress = '0xa5fad283d9b6ffbdf554c2966a09d8fccf4fbe3e';
     
     if (navigator.clipboard && navigator.clipboard.writeText) {
