@@ -170,10 +170,23 @@ function App() {
     setTimeout(() => setSuccess(''), 3000);
   };
 
-  const handleTipDev = () => {
-    navigator.clipboard.writeText('0xa5fad283d9b6ffbdf554c2966a09d8fccf4fbe3e');
-    setSuccess('Dev address copied to clipboard!');
-    setTimeout(() => setSuccess(''), 3000);
+const handleTipDev = () => {
+    const devAddress = '0xa5fad283d9b6ffbdf554c2966a09d8fccf4fbe3e';
+    
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(devAddress)
+        .then(() => {
+          setSuccess('Dev address copied to clipboard!');
+          setTimeout(() => setSuccess(''), 3000);
+        })
+        .catch(err => {
+          console.error('Clipboard error:', err);
+          alert('Dev address: ' + devAddress + '\n\nPlease copy manually.');
+        });
+    } else {
+      // Fallback for browsers that don't support clipboard API
+      alert('Dev address: ' + devAddress + '\n\nPlease copy manually.');
+    }
   };
 
   const loadUSDCBalance = async () => {
